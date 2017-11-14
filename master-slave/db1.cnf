@@ -1,0 +1,20 @@
+[mariadb]
+# enable the binary log for slaves to replicate from
+log-bin
+# default in 10.2.4+ is MIXED instead of STATEMENT
+binlog-format=ROW
+# must be a unique non-zero uint32
+server_id=1
+# the name prefix for the various logging files
+log-basename=db1
+# if this is 1, only local socket based connections are allowed
+skip-networking=0
+
+default-storage-engine=MyISAM
+myisam-recover=FORCE,BACKUP
+character-set-server=utf8
+collation-server=utf8_general_ci
+
+# there are no other masters, so these are okay
+auto-increment-offset=1
+auto-increment-increment=1
