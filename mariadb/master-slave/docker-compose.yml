@@ -1,0 +1,31 @@
+version: "2"
+
+services:
+  db1:
+    build:
+      context: ./
+      dockerfile: ./db1.Dockerfile
+    restart: always
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    links:
+     - db2
+  db2:
+    build:
+      context: ./
+      dockerfile: ./db2.Dockerfile
+    restart: always
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+     - 8080:8080
+    links:
+     - db1
+    environment:
+      ADMINER_DESIGN: ng9
+    depends_on:
+     - db1

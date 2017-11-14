@@ -1,0 +1,10 @@
+[mariadb]
+server_id=2
+
+# needs to match that of the master? possibly not - TEST
+binlog-format=ROW
+# there are no other masters, so these are okay
+auto-increment-offset=1
+auto-increment-increment=1
+
+read-only=1
