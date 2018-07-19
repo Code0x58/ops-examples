@@ -4,17 +4,6 @@ function indent_out {
     "$@" | sed "s/^/  /"
 }
 
-function docker_exec {
-    # work around for https://github.com/docker/compose/issues/3352
-    local service=$1
-    shift
-    local flags="-i"
-    if tty -s; then
-        flags="${flags}t"
-    fi
-    docker exec $flags $(docker-compose ps -q "$service") "$@"
-}
-
 function run {
     local service="$1"
     shift
@@ -38,15 +27,15 @@ function run {
     echo "$@" "${extra[@]}" | awk "NR==1{print \"  $service\$ \" \$0; next} {print \"  > \" \$0}"
     if [ -n "$INPUT_FILE" ]; then
         if [ -n "$OUTPUT_FILE" ]; then
-            docker_exec "$service" "$@" < "$INPUT_FILE" > "$OUTPUT_FILE"
+            docker-compose exec -T "$service" "$@" < "$INPUT_FILE" > "$OUTPUT_FILE"
         else
-            indent_out docker_exec "$service" "$@" < "$INPUT_FILE"
+            indent_out docker-compose exec -T "$service" "$@" < "$INPUT_FILE"
         fi
     else
         if [ -n "$OUTPUT_FILE" ]; then
-            docker_exec "$service" "$@" > "$OUTPUT_FILE"
+            docker-compose exec -T "$service" "$@" > "$OUTPUT_FILE"
         else
-            indent_out docker_exec "$service" "$@"
+            indent_out docker-compose exec -T "$service" "$@"
         fi
     fi
 }
