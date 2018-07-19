@@ -30,7 +30,24 @@ function run {
         esac
     done
     # print the command line with a pretend shell prompt
-    echo "$@" "${extra[@]}" | awk "NR==1{print \"  $service\$ \" \$0; next} {print \"  > \" \$0}"
+    # print out each part, with quoting as necissary
+    (
+        for arg in "$@"; do
+            # if the arg needs escaping
+            if echo -n "$arg" | grep --silent --extended-regexp '\s|\$|`|!|&|\||<|>|'"'"; then
+                if ! echo -n "$arg" | grep --silent "'"; then
+                    # can use hard quoting
+                    arg="'$arg'"
+                else
+                    # need to escape in quoting
+                    # if it starts with <>&| then escape it too
+                    arg="\"$(echo "$arg" | sed --regexp-extended 's#[$`"\\]#\\&#g')\""
+                fi
+            fi
+            echo -n "$arg "
+        done
+        echo "${extra[@]}"
+    ) | awk "NR==1{print \"  $service\$ \" \$0; next} {print \"  > \" \$0}"
     # if output file is stdout, then indent
     if [ "$OUTPUT_FILE" = /dev/stdout ]; then
         docker-compose exec -T "$service" "$@" < "$INPUT_FILE" | indent_in
