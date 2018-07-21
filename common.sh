@@ -1,5 +1,12 @@
 set -e
 
+function doc {
+    # print the input as bold text if on tty
+    tput bold
+    cat
+    tput sgr0
+}
+
 function indent_in {
     sed "s/^/  /"
 }

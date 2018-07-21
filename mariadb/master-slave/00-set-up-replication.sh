@@ -3,14 +3,14 @@
 #  to use Python
 source "$(realpath "$(dirname "$(realpath $0)")")/../../common.sh"
 
-cat << DOC
+doc << DOC
 == Master → Slave set up ==
 
 Make sure that the replication user has the correct privilages.
 
 DOC
 run db1 mysql -e "GRANT REPLICATION SLAVE ON *.* TO replication_user"
-cat << DOC
+doc << DOC
 
 Set everything needed in CHANGE MASTER except log-file and position to
 prepare it for recieving a dump later:
@@ -25,7 +25,7 @@ run db2 mysql -e "
     MASTER_PORT=3306,
     MASTER_CONNECT_RETRY=10"
 
-cat << DOC
+doc << DOC
 
 Use mysqldump to create a dump, it will set MASTER_LOG_FILE and
 MASTER_LOG_POS, delete old slaved databases, and start slaving when the dump
@@ -38,7 +38,7 @@ run db1 mysqldump \
     --master-data=1 \
     --apply-slave-statements \
     --add-drop-database \> $dumpfile
-cat << DOC
+doc << DOC
 
 As of MariaDB 5.3 it is possible to add --single-transaction to perform a
 non-blocking dump (altough there is a brief lock at the start).
@@ -49,21 +49,21 @@ DOC
 
 run db2 mysql \< $dumpfile
 
-cat << DOC
+doc << DOC
 
 The position of the master can be checked:
 
 DOC
 run db1 mysql -e "SHOW MASTER STATUS"
 
-cat << DOC
+doc << DOC
 
 The status of the slave can be checked:
 
 DOC
 run db2 mysql -e "SHOW SLAVE STATUS\G"
 
-cat << DOC
+doc << DOC
 
 When the database is written to, the master log position will change, and the
 slave will follow. In this case the master isn't being written to, so to
@@ -75,7 +75,7 @@ run db1 mysql -e "CREATE DATABASE now_you_see_me"
 sleep 1
 run db2 mysql -e "SHOW DATABASES LIKE 'now%'"
 
-cat << DOC
+doc << DOC
 
 There is a container running adminer which is linked to the two database
 containers, it can be acessed at http://127.0.0.1:8080/ and from there
