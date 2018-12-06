@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 # XXX: would be good if there was proper quoting, would be simplest
 #  to use Python
 source "$(realpath "$(dirname "$(realpath $0)")")/../../common.sh"
