@@ -54,7 +54,7 @@ function run {
             echo -n "$arg "
         done
         echo "${extra[@]}"
-    ) | awk "NR==1{print \"  $service\$ \" \$0; next} {print \"  > \" \$0}"
+    ) | awk "NR==1{print \"  $(tput bold)$service\$$(tput sgr0) \" \$0; next} {print \"  > \" \$0}"
     # if output file is stdout, then indent
     if [ "$OUTPUT_FILE" = /dev/stdout ]; then
         docker-compose exec -T "$service" "$@" < "$INPUT_FILE" | indent_in
