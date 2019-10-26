@@ -57,8 +57,8 @@ function run {
     ) | awk "NR==1{print \"  $(tput bold)$service\$$(tput sgr0) \" \$0; next} {print \"  > \" \$0}"
     # if output file is stdout, then indent
     if [ "$OUTPUT_FILE" = /dev/stdout ]; then
-        docker-compose exec -T "$service" "$@" < "$INPUT_FILE" | indent_in
+        docker-compose --log-level=ERROR exec -T "$service" env "$@" < "$INPUT_FILE" | indent_in
     else
-        docker-compose exec -T "$service" "$@" < "$INPUT_FILE" > "$OUTPUT_FILE"
+        docker-compose --log-level=ERROR exec -T "$service" env "$@" < "$INPUT_FILE" > "$OUTPUT_FILE"
     fi
 }
